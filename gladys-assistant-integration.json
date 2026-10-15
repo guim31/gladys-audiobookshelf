@@ -211,7 +211,7 @@
       "description": {
         "en": "A user starts or resumes an audiobook or a podcast episode.",
         "fr": "Un utilisateur lance ou reprend un livre audio ou un épisode de podcast.",
-        "de": "Ein Benutzer startet oder setzt ein Hörbuch oder eine Podcast-Episode fort.",
+        "de": "Ein Benutzer startet ein Hörbuch oder eine Podcast-Episode oder setzt sie fort.",
         "es": "Un usuario inicia o reanuda un audiolibro o un episodio de pódcast."
       },
       "fields": [
@@ -335,7 +335,7 @@
       "label": {
         "en": "Listening stopped",
         "fr": "Écoute arrêtée",
-        "de": "Wiedergabe beendet",
+        "de": "Wiedergabe gestoppt",
         "es": "Escucha detenida"
       },
       "description": {

@@ -95,8 +95,9 @@ export const coverKey = (itemId) => {
   return COVER_KEY.test(key) ? key : null;
 };
 
-const withCover = (itemId) => {
-  const image = itemId ? coverKey(itemId) : null;
+// Only for an item that has a cover: the server answers 404 otherwise.
+const withCover = (itemId, cover) => {
+  const image = itemId && cover ? coverKey(itemId) : null;
   return image ? { image } : {};
 };
 
@@ -154,7 +155,7 @@ async function getNowListening(hub, { settings, language = 'en' }) {
             [hub.userName(session.userId), by, `${progress} %`].filter(Boolean).join(' · '),
             120,
           ),
-          ...withCover(session.itemId),
+          ...withCover(session.itemId, session.cover),
           badge: active
             ? { text: t(TEXT.playing, language), color: WIDGET_COLORS.SUCCESS }
             : { text: t(TEXT.paused, language), color: WIDGET_COLORS.NEUTRAL },
@@ -192,7 +193,7 @@ async function getRecentlyAdded(hub, { language = 'en' }) {
         return {
           title: fit(item.title, 60),
           ...(item.addedAt ? { date: new Date(item.addedAt).toISOString() } : {}),
-          ...withCover(item.itemId),
+          ...withCover(item.itemId, item.cover),
           badge: {
             text: t(episode ? TEXT.episode : TEXT.book, language),
             color: episode ? WIDGET_COLORS.INFO : WIDGET_COLORS.NEUTRAL,

@@ -94,6 +94,10 @@ export const HUB_TIMINGS = {
   // After "check new episodes", read the episodes again this soon (the
   // server downloads them in the background).
   recheckAfterMs: 45_000,
+  // "Check new episodes": feeds read at once, and the time budget (the
+  // action times out at 120 s, each feed at 30 s).
+  checkParallel: 4,
+  checkBudgetMs: 75_000,
   // Additions kept for the widget.
   recentCount: 12,
 };
@@ -214,9 +218,13 @@ export class AbsHub {
         this.store.save(this.saved);
       }
     }
-    await this.publishDevices();
-    await this.refresh({ library: true });
-    this.schedule();
+    try {
+      await this.publishDevices();
+      await this.refresh({ library: true });
+    } finally {
+      // Even after a failure: the next tick tries again.
+      this.schedule();
+    }
   }
 
   reset() {
@@ -267,10 +275,22 @@ export class AbsHub {
     if (library) {
       this.libraryDueAt = 0;
     }
-    this.running ??= this.read().finally(() => {
-      this.running = null;
-    });
-    return this.running;
+    if (this.running && this.runningClient === this.client) {
+      return this.running;
+    }
+    // A reading of a previous configuration may still run: this one follows it.
+    const previous = this.running ?? Promise.resolve();
+    const run = previous
+      .catch(() => {})
+      .then(() => this.read())
+      .finally(() => {
+        if (this.running === run) {
+          this.running = null;
+        }
+      });
+    this.running = run;
+    this.runningClient = this.client;
+    return run;
   }
 
   async read() {
@@ -278,7 +298,7 @@ export class AbsHub {
       await this.afterChanges(new Set());
       return;
     }
-    const client = this.client;
+    const client = this.guarded(this.client);
     const changed = new Set();
     try {
       const now = this.now();
@@ -292,7 +312,7 @@ export class AbsHub {
       for (const record of users.filter(Boolean)) {
         await this.readUser(client, record, changed);
       }
-      if (client !== this.client) {
+      if (client.stale()) {
         return; // reconfigured meanwhile
       }
       if (this.error) {
@@ -304,15 +324,44 @@ export class AbsHub {
       this.server.reachable = true;
       await this.publishAll();
     } catch (err) {
+      if (err.stale) {
+        return; // reconfigured meanwhile: this reading is dropped
+      }
       if (!err.kind) {
         throw err;
       }
-      if (client !== this.client) {
+      if (client.stale()) {
         return;
       }
       await this.applyFailure(err, changed);
     }
     await this.afterChanges(changed);
+  }
+
+  /**
+   * The client of a reading: after each answer, a reading whose client was
+   * replaced (a new address or key) stops before it changes anything.
+   */
+  guarded(client) {
+    const stale = () => client !== this.client;
+    return new Proxy(client, {
+      get(target, name) {
+        if (name === 'stale') {
+          return stale;
+        }
+        const value = target[name];
+        if (typeof value !== 'function') {
+          return value;
+        }
+        return async (...args) => {
+          const answer = await value.apply(target, args);
+          if (stale()) {
+            throw Object.assign(new Error('Reconfigured during the reading'), { stale: true });
+          }
+          return answer;
+        };
+      },
+    });
   }
 
   async applyFailure(err, changed) {
@@ -412,8 +461,9 @@ export class AbsHub {
         const age = session.updatedAt === null ? Infinity : Math.abs(now - session.updatedAt);
         lastChangeAt = age < this.timings.activeMs ? now : now - age;
       } else if (
-        previous.session.updatedAt !== session.updatedAt ||
-        previous.session.currentTime !== session.currentTime
+        // A synchronization of the player: a seek while paused moves the
+        // position, not updatedAt.
+        previous.session.updatedAt !== session.updatedAt
       ) {
         lastChangeAt = now;
       } else {
@@ -510,7 +560,18 @@ export class AbsHub {
   /** Progress (finished books, last title) and time listened today of a user. */
   async readUser(client, record, changed) {
     const userId = record.user.id;
-    const progress = parseProgress(await client.user(userId));
+    let detail;
+    try {
+      detail = await client.user(userId);
+    } catch (err) {
+      // A user deleted since the last reading of the users.
+      if (err.kind === ERROR_KINDS.HTTP && err.status === 404) {
+        this.users.delete(userId);
+        return;
+      }
+      throw err;
+    }
+    const progress = parseProgress(detail);
     const today = Math.round(parseToday(await client.listeningStats(userId)) / 60);
     record.snapshot.today = Math.min(today, 24 * 60);
     record.progress = progress;
@@ -656,8 +717,14 @@ export class AbsHub {
       return;
     }
     // Even an empty list: the Discovery tab then shows no stale device.
-    await this.gladys.publishDiscoveredDevices(devices);
-    this.devicesKey = key;
+    try {
+      await this.gladys.publishDiscoveredDevices(devices);
+      this.devicesKey = key;
+      this.resolved('devices');
+    } catch (err) {
+      // Sent again at the next reading.
+      this.problem('devices', `Devices refused: ${err.message}`);
+    }
   }
 
   /** "Search" in the Discovery tab: publish the devices again, read the server. */
@@ -800,8 +867,8 @@ export class AbsHub {
     if (this.error) {
       return {
         connected: false,
-        message: everyLanguage(ERROR_TEXT[this.error.kind], (text) =>
-          `Audiobookshelf: ${text}`.slice(0, 200),
+        message: everyLanguage(ERROR_TEXT[this.error.kind], (text, language) =>
+          labelled('Audiobookshelf', text, language).slice(0, 200),
         ),
       };
     }
@@ -858,15 +925,24 @@ export class AbsHub {
       if (podcastLibraries.length === 0) {
         throw new Error(pick(ACTION_TEXT.noPodcast, this.config.language));
       }
+      const ids = [];
+      for (const library of podcastLibraries) {
+        ids.push(...parsePodcastIds(await client.items(library.id, 500)));
+      }
+      // The server reads each feed before answering: a few at a time, and
+      // no new one past the budget, so the action answers within its timeout
+      // (the server keeps downloading what it found).
+      const deadline = this.now() + this.timings.checkBudgetMs;
       let podcasts = 0;
       let episodes = 0;
-      for (const library of podcastLibraries) {
-        for (const podcastId of parsePodcastIds(await client.items(library.id, 500))) {
-          const answer = await client.checkNewEpisodes(podcastId);
+      const worker = async () => {
+        while (ids.length > 0 && this.now() < deadline) {
+          const answer = await client.checkNewEpisodes(ids.shift());
           podcasts += 1;
           episodes += Array.isArray(answer?.episodes) ? answer.episodes.length : 0;
         }
-      }
+      };
+      await Promise.all(Array.from({ length: this.timings.checkParallel }, worker));
       logger.info(`Checked ${podcasts} podcast(s) for new episodes: ${episodes} found`);
       if (episodes > 0) {
         this.libraryDueAt = this.now() + this.timings.recheckAfterMs;

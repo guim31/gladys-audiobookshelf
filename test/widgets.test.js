@@ -46,7 +46,8 @@ test('"Now listening" shows the playing and paused sessions with their covers', 
     list.items.map((item) => [item.title, item.subtitle, item.badge.text, item.image]),
     [
       ['Quiet Morning', 'alice · Jane Doe · 25 %', 'Listening', `cover-${IDS.QUIET_MORNING}`],
-      ['Episode Two', 'root · Test Tones Podcast · 33 %', 'Paused', `cover-${IDS.PODCAST}`],
+      // The podcast of the captures has no cover: no image declared.
+      ['Episode Two', 'root · Test Tones Podcast · 33 %', 'Paused', undefined],
     ],
   );
 });
@@ -75,12 +76,12 @@ test('"Recently added" shows books and episodes, last first, and the button', as
   const [grid] = ofType(body, 'card-list');
   assert.equal(grid.display, 'grid');
   assert.deepEqual(
-    grid.items.map((item) => [item.title, item.badge.text]),
+    grid.items.map((item) => [item.title, item.badge.text, item.image]),
     [
-      ['Episode Three', 'Episode'],
-      ['Episode Two', 'Episode'],
-      ['Quiet Morning', 'Book'],
-      ['Long Evening', 'Book'],
+      ['Episode Three', 'Episode', undefined],
+      ['Episode Two', 'Episode', undefined],
+      ['Quiet Morning', 'Book', `cover-${IDS.QUIET_MORNING}`],
+      ['Long Evening', 'Book', undefined],
     ],
   );
   const [button] = ofType(body, 'button');

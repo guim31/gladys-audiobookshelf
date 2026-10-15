@@ -35,6 +35,7 @@ export function parseSessions(answer) {
         timeListening: number(session.timeListening) ?? 0,
         updatedAt: number(session.updatedAt),
         client: text(session.deviceInfo?.clientName),
+        cover: Boolean(text(session.coverPath)),
       };
     });
 }
@@ -98,6 +99,8 @@ export function parseRecentEpisodes(answer, library) {
       mediaType: MEDIA_TYPES.PODCAST,
       addedAt: number(episode.addedAt) ?? 0,
       duration: number(episode.duration),
+      // The cover of an episode is the one of its podcast.
+      cover: Boolean(text(episode.podcast?.coverPath)),
     }));
 }
 
@@ -122,6 +125,7 @@ export function parseItems(answer, library) {
         mediaType: MEDIA_TYPES.BOOK,
         addedAt: number(item.addedAt) ?? 0,
         duration: number(item.media?.duration),
+        cover: Boolean(text(item.media?.coverPath)),
       };
     });
 }

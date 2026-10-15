@@ -78,11 +78,11 @@ bis der Player seine Position 90 Sekunden lang nicht gemeldet hat.
 
 ### Auslöser
 
-- **Wiedergabe gestartet**: Ein Benutzer startet oder setzt ein Hörbuch oder
-  eine Episode fort. Filter: der Benutzer, der Typ (Hörbuch oder
+- **Wiedergabe gestartet**: Ein Benutzer startet ein Hörbuch oder eine
+  Episode oder setzt sie fort. Filter: der Benutzer, der Typ (Hörbuch oder
   Podcast-Episode). Informationen: Benutzer, Titel, Autor, Podcast, Typ,
   Fortschritt.
-- **Wiedergabe beendet**: Ein Benutzer pausiert oder hört auf (90 Sekunden
+- **Wiedergabe gestoppt**: Ein Benutzer pausiert oder hört auf (90 Sekunden
   ohne Fortschritt). Gleiche Filter und Informationen, dazu die in der Sitzung
   gehörten Minuten.
 - **Buch oder Episode beendet**: Ein Benutzer erreicht das Ende eines Buchs
@@ -107,7 +107,7 @@ bis der Player seine Position 90 Sekunden lang nicht gemeldet hat.
 
 - **Gutenachtgeschichte**: Bei _Wiedergabe gestartet_ für den Benutzer der
   Kinder nach 20 Uhr das Licht im Kinderzimmer dimmen; bei _Wiedergabe
-  beendet_ ausschalten.
+  gestoppt_ ausschalten.
 - **Morgenpodcast**: Jeden Tag um 6 Uhr _Nach neuen Podcast-Episoden suchen_;
   bei _Neue Podcast-Episode heruntergeladen_ für deine tägliche Sendung eine
   Benachrichtigung mit ihrem Titel senden.

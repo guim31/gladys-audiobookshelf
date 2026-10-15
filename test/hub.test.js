@@ -303,3 +303,65 @@ test('the timer of the container reads the sessions without Gladys polling', asy
   await w.hub.running;
   assert.equal(reads(), first + 1);
 });
+
+test('a seek while paused is not a new start', async (t) => {
+  const w = await world(t);
+  const session = w.server.play({ at: w.clock.now() - 10 * 60_000 });
+  await w.hub.refresh();
+  w.server.openSessions.find((entry) => entry.id === session).currentTime += 120;
+  await w.hub.refresh();
+  assert.deepEqual(events(w, TRIGGERS.STARTED), []);
+});
+
+test('a user deleted between two readings is dropped, the server stays online', async (t) => {
+  const w = await world(t);
+  delete w.server.userDetails[IDS.ALICE];
+  w.server.play({ at: w.clock.now() });
+  await w.hub.refresh();
+  assert.equal(w.hub.users.has(IDS.ALICE), false);
+  assert.equal(w.fake.lastState(serverFeature(w.gladys, 'online')), 1);
+  assert.equal(w.fake.connectionStatus.connected, true);
+});
+
+test('a new address while a reading runs: the old reading changes nothing', async (t) => {
+  const OTHER = 'http://192.0.2.20:13378';
+  const old = new FakeAbs();
+  const other = new FakeAbs();
+  other.play({ at: createClock().now() });
+  const w = await world(t, { servers: { [SERVER_URL]: old, [OTHER]: other }, server: old });
+  // The old server answers slowly: the configuration changes meanwhile.
+  let release;
+  const original = old.handle.bind(old);
+  old.handle = async (...args) => {
+    await new Promise((resolve) => {
+      release = resolve;
+    });
+    return original(...args);
+  };
+  const running = w.hub.refresh();
+  await new Promise((resolve) => setImmediate(resolve));
+  const reconfigured = w.hub.reconfigure({ ...w.hub.config, url: OTHER });
+  old.handle = original;
+  release();
+  await Promise.all([running, reconfigured]);
+  // The session already playing on the new server is the starting point.
+  assert.deepEqual(events(w, TRIGGERS.STARTED), []);
+  assert.equal(w.fake.lastState(userFeature(w.gladys, 'listening')), 1);
+});
+
+test('Gladys refusing the devices does not stop the readings', async (t) => {
+  const w = await world(t, { connect: false });
+  let refusals = 1;
+  const original = w.gladys.publishDiscoveredDevices.bind(w.gladys);
+  w.gladys.publishDiscoveredDevices = async (devices) => {
+    if (refusals-- > 0) {
+      throw new Error('HTTP 500');
+    }
+    return original(devices);
+  };
+  await w.gladys.connect();
+  await w.app.ready;
+  assert.equal(w.fake.connectionStatus.connected, true);
+  await w.hub.refresh({ library: true });
+  assert.equal(w.fake.discoveredDevices.length, 3);
+});
