@@ -1,0 +1,28 @@
+{
+  "episodes": [
+    {
+      "title": "Episode Three",
+      "subtitle": "",
+      "description": "",
+      "descriptionPlain": "",
+      "pubDate": "Thu, 15 Oct 2026 18:41:32 GMT",
+      "episodeType": "",
+      "season": "",
+      "episode": "",
+      "author": "",
+      "duration": "",
+      "durationSeconds": null,
+      "explicit": "",
+      "publishedAt": 1792089692000,
+      "enclosure": {
+        "url": "http://gladys-test-audiobookshelf-feed:8000/ep1.mp3",
+        "length": "480358",
+        "type": "audio/mpeg"
+      },
+      "guid": "ep3",
+      "chaptersUrl": null,
+      "chaptersType": null,
+      "chapters": []
+    }
+  ]
+}

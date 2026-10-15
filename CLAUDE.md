@@ -32,15 +32,20 @@ pushing.
 
 ```
 index.js                          SDK wiring only: handlers registered before connect()
-src/devices/index.js              registry of the device blueprints + dispatch helpers
-src/devices/<type>.js             one device type per file (buildDevice, onPoll, onSetValue...)
+src/app.js                        registers every SDK handler on the hub (shared with the tests)
+src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults), URL parsing
+src/hub.js                        timer, sessions (playing/paused), states, scene events, commands
+src/devices.js                    server device + one device per user: features, names (4 languages)
+src/abs/client.js                 Audiobookshelf REST client (Bearer key), error kinds
+src/abs/model.js                  pure parsers: sessions, users, progress, libraries, episodes
+src/abs/http.js                   the only network function (node:http/https), the test seam
+src/widgets.js                    "Now listening" and "Recently added" widgets (covers via onWidgetGetImage)
 src/scenes.js                     scene action handlers (manifest `scene_actions`)
-src/widgets.js                    dashboard widget handlers (manifest `widgets`)
-src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
-src/weather.js                    example driver (Open-Meteo)
-gladys-assistant-integration.json manifest: name, config_schema, actions, image...
-docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
-test/                             node --test, against the SDK's fake Gladys (integration-sdk/testing)
+src/texts.js                      messages in en/fr/de/es
+src/store.js                      /data/audiobookshelf-state.json: cursors of the scene events
+gladys-assistant-integration.json manifest: name, config_schema, actions, triggers, widgets...
+docs/{en,fr,de,es}.md             user documentation, re-hosted by Gladys, same sections
+test/                             node --test, fake Audiobookshelf (test/helpers) + the SDK's fake Gladys
 .github/scripts/release.mjs       release helpers (manifest bump, changelog), tested in test/
 ```
 
@@ -70,8 +75,9 @@ test/                             node --test, against the SDK's fake Gladys (in
   `type: "provider"`: 5.1.0). `test/manifest.test.js` ties the manifest to the
   code (defaults, action, scene and widget handlers): change both sides
   together.
-- **User-facing text** is bilingual (English and French): action messages,
-  manifest texts, and `docs/en.md` / `docs/fr.md`, kept in sync.
+- **User-facing text** exists in English, French, German and Spanish: action
+  messages, widget texts, feature names, manifest texts, and
+  `docs/{en,fr,de,es}.md`, kept in sync (`test/i18n.test.js`).
 - **Style.** Prettier formats, ESLint catches mistakes. Comments explain why,
   in English. Tests never touch the network.
 
@@ -233,3 +239,27 @@ long, et sur un « Sie »/« Ihr… » de politesse en allemand. Le store exige 
 - Docs `en`, `fr`, `de`, `es` avec les mêmes sections.
 - Chauffe, ouverture, sécurité : ne rien rendre pilotable « comme un thermostat » ou par un assistant
   vocal quand une erreur serait dangereuse (leçon d'OctoPrint).
+
+## Audiobookshelf : propre à cette intégration
+
+- **API** (vérifiée sur un vrai serveur 2.37.1, image `ghcr.io/advplyr/audiobookshelf`) : REST, clé en
+  `Authorization: Bearer`. Clés d'API depuis la 2.26 (Paramètres → Clés API) ; avant, le jeton d'un
+  utilisateur. `/status` est public (`app: "audiobookshelf"`, `serverVersion`). `/api/users/online`
+  (sessions ouvertes), `/api/users` et `/api/users/:id` (progression) sont **réservés aux admins** :
+  403 sinon, rapporté comme « clé non administrateur ».
+- **`/api/users` renvoie les jetons de chaque utilisateur** (`token`) : ne garder que l'id et le nom,
+  ne jamais journaliser la réponse. Les fixtures en sont expurgées.
+- **Une session reste ouverte en pause** (`openSessions`) : « en écoute » = son `updatedAt` ou sa
+  position a bougé depuis moins de 90 s (le lecteur se synchronise toutes les 10 à 15 s en lecture),
+  mesuré sur l'horloge du conteneur. Le premier relevé après le démarrage sert de point de départ :
+  aucun « écoute démarrée » pour les sessions déjà en cours.
+- La progression d'un **épisode** n'a pas de `displayTitle` : le titre vient de `/api/items/:id`
+  (épisodes inclus), mis en cache.
+- `GET /api/podcasts/:id/checknew` **télécharge** les épisodes trouvés (en tâche de fond) et ne
+  renvoie que ceux postérieurs à `lastEpisodeCheck` : l'épisode téléchargé apparaît dans
+  `/api/libraries/:id/recent-episodes` quelques secondes plus tard, d'où une relecture 45 s après.
+- `listening-stats.today` est en secondes, sur le **jour du serveur** (son fuseau).
+- Banc de test Docker : le filtre anti-SSRF d'Audiobookshelf refuse un flux RSS sur une adresse
+  privée ; pour un flux local de test, lancer le serveur avec `DISABLE_SSRF_REQUEST_FILTER=1`.
+- Couvertures : `/api/items/:id/cover?width=240&format=jpeg` (redimensionnée par le serveur), 404 si
+  l'élément n'en a pas. Clés d'image `cover-<uuid>`.

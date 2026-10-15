@@ -1,0 +1,106 @@
+{
+  "usersOnline": [],
+  "openSessions": [
+    {
+      "id": "7356ef4d-7032-48aa-a17b-e4d151e42a28",
+      "userId": "4f941f99-2136-4542-aacf-7f59e425429b",
+      "libraryId": "3ba8f359-82ff-4f9f-9c52-73f0d009143b",
+      "libraryItemId": "8bdb9b23-23f1-419e-ac24-f7a20723e579",
+      "bookId": "8f55c184-1914-4171-8311-57b22072e661",
+      "episodeId": null,
+      "mediaType": "book",
+      "mediaMetadata": {
+        "title": "Quiet Morning",
+        "subtitle": null,
+        "authors": [
+          {
+            "id": "5e587008-a806-4ce6-9a92-989d07257693",
+            "name": "Jane Doe"
+          }
+        ],
+        "narrators": [],
+        "series": [],
+        "genres": [],
+        "publishedYear": null,
+        "publishedDate": null,
+        "publisher": null,
+        "description": null,
+        "isbn": null,
+        "asin": null,
+        "language": null,
+        "explicit": false,
+        "abridged": false
+      },
+      "chapters": [],
+      "displayTitle": "Quiet Morning",
+      "displayAuthor": "Jane Doe",
+      "coverPath": "/audiobooks/Jane Doe/Quiet Morning/cover.jpg",
+      "duration": 600,
+      "playMethod": 0,
+      "mediaPlayer": "html5",
+      "deviceInfo": {
+        "id": "5c5502bc-9827-4669-91f5-29d241cc8cbc",
+        "userId": "4f941f99-2136-4542-aacf-7f59e425429b",
+        "deviceId": "dev-1",
+        "ipAddress": "192.0.2.50",
+        "clientVersion": "2.37.1",
+        "clientName": "Gladys test"
+      },
+      "serverVersion": "2.37.1",
+      "date": "2026-10-15",
+      "dayOfWeek": "Thursday",
+      "timeListening": 200,
+      "startTime": 0,
+      "currentTime": 200,
+      "startedAt": 1792089561681,
+      "updatedAt": 1792089575415
+    },
+    {
+      "id": "0704b00f-eafb-450d-89df-2f82a6e06f77",
+      "userId": "ef8f0b89-812a-488f-9ab4-adc770f8c3c5",
+      "libraryId": "151bcf1f-5f58-4558-9968-bce97203ca35",
+      "libraryItemId": "ee595e9c-fa92-45d8-be45-a6df00306eb2",
+      "bookId": null,
+      "episodeId": "430adaf8-65ee-486a-b559-c42616f293f1",
+      "mediaType": "podcast",
+      "mediaMetadata": {
+        "title": "Test Tones Podcast",
+        "author": "Test Author",
+        "description": null,
+        "releaseDate": null,
+        "genres": [],
+        "feedUrl": "http://gladys-test-audiobookshelf-feed:8000/feed.xml",
+        "imageUrl": "http://gladys-test-audiobookshelf-feed:8000/cover.jpg",
+        "itunesPageUrl": null,
+        "itunesId": null,
+        "itunesArtistId": null,
+        "explicit": false,
+        "language": null,
+        "type": null
+      },
+      "chapters": [],
+      "displayTitle": "Episode Two",
+      "displayAuthor": "Test Author",
+      "coverPath": null,
+      "duration": 120.019592,
+      "playMethod": 0,
+      "mediaPlayer": "html5",
+      "deviceInfo": {
+        "id": "f689efd5-1953-4241-bc0d-2f7900640cc3",
+        "userId": "ef8f0b89-812a-488f-9ab4-adc770f8c3c5",
+        "deviceId": "dev-2",
+        "ipAddress": "192.0.2.50",
+        "clientVersion": "2.37.1",
+        "clientName": "Gladys test"
+      },
+      "serverVersion": "2.37.1",
+      "date": "2026-10-15",
+      "dayOfWeek": "Thursday",
+      "timeListening": 40,
+      "startTime": 0,
+      "currentTime": 40,
+      "startedAt": 1792089660843,
+      "updatedAt": 1792089660888
+    }
+  ]
+}

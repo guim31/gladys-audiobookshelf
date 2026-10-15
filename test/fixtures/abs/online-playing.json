@@ -1,0 +1,59 @@
+{
+  "usersOnline": [],
+  "openSessions": [
+    {
+      "id": "7356ef4d-7032-48aa-a17b-e4d151e42a28",
+      "userId": "4f941f99-2136-4542-aacf-7f59e425429b",
+      "libraryId": "3ba8f359-82ff-4f9f-9c52-73f0d009143b",
+      "libraryItemId": "8bdb9b23-23f1-419e-ac24-f7a20723e579",
+      "bookId": "8f55c184-1914-4171-8311-57b22072e661",
+      "episodeId": null,
+      "mediaType": "book",
+      "mediaMetadata": {
+        "title": "Quiet Morning",
+        "subtitle": null,
+        "authors": [
+          {
+            "id": "5e587008-a806-4ce6-9a92-989d07257693",
+            "name": "Jane Doe"
+          }
+        ],
+        "narrators": [],
+        "series": [],
+        "genres": [],
+        "publishedYear": null,
+        "publishedDate": null,
+        "publisher": null,
+        "description": null,
+        "isbn": null,
+        "asin": null,
+        "language": null,
+        "explicit": false,
+        "abridged": false
+      },
+      "chapters": [],
+      "displayTitle": "Quiet Morning",
+      "displayAuthor": "Jane Doe",
+      "coverPath": "/audiobooks/Jane Doe/Quiet Morning/cover.jpg",
+      "duration": 600,
+      "playMethod": 0,
+      "mediaPlayer": "html5",
+      "deviceInfo": {
+        "id": "5c5502bc-9827-4669-91f5-29d241cc8cbc",
+        "userId": "4f941f99-2136-4542-aacf-7f59e425429b",
+        "deviceId": "dev-1",
+        "ipAddress": "192.0.2.50",
+        "clientVersion": "2.37.1",
+        "clientName": "Gladys test"
+      },
+      "serverVersion": "2.37.1",
+      "date": "2026-10-15",
+      "dayOfWeek": "Thursday",
+      "timeListening": 150,
+      "startTime": 0,
+      "currentTime": 150,
+      "startedAt": 1792089561681,
+      "updatedAt": 1792089561732
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 {
-  "name": "gladys-integration-template-js",
+  "name": "gladys-audiobookshelf",
   "version": "1.0.0",
   "private": true,
-  "description": "Official starter template to build an external integration for Gladys Assistant with the JavaScript SDK.",
+  "description": "Audiobookshelf integration for Gladys Assistant: who listens to what, progress, finished books, new podcast episodes.",
   "type": "module",
   "main": "index.js",
   "scripts": {

@@ -1,0 +1,22 @@
+{
+  "largestItems": [
+    {
+      "id": "ee595e9c-fa92-45d8-be45-a6df00306eb2",
+      "title": "Test Tones Podcast",
+      "size": 480681
+    }
+  ],
+  "totalGenres": 0,
+  "genresWithCount": [],
+  "totalItems": 1,
+  "longestItems": [
+    {
+      "id": "ee595e9c-fa92-45d8-be45-a6df00306eb2",
+      "title": "Test Tones Podcast",
+      "duration": 120.019592
+    }
+  ],
+  "totalSize": 480681,
+  "totalDuration": 120.019592,
+  "numAudioTracks": 1
+}
