@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-15
+
 ### Added
 
 - An **Audiobookshelf** server device: online, players listening now, number
@@ -26,4 +28,5 @@ the notes of the version's GitHub Release.
   episodes).
 - Texts and documentation in English, French, German and Spanish.
 
-[Unreleased]: https://github.com/guim31/gladys-audiobookshelf/commits/main
+[Unreleased]: https://github.com/guim31/gladys-audiobookshelf/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/guim31/gladys-audiobookshelf/releases/tag/v1.0.0
