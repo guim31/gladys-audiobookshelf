@@ -1,0 +1,127 @@
+{
+  "id": "8bdb9b23-23f1-419e-ac24-f7a20723e579",
+  "ino": "30055379",
+  "oldLibraryItemId": null,
+  "libraryId": "3ba8f359-82ff-4f9f-9c52-73f0d009143b",
+  "folderId": "b7da7f2c-7880-482a-8a04-4078f577e571",
+  "path": "/audiobooks/Jane Doe/Quiet Morning",
+  "relPath": "Jane Doe/Quiet Morning",
+  "isFile": false,
+  "mtimeMs": 1792089470273,
+  "ctimeMs": 1792089470273,
+  "birthtimeMs": 1792089451639,
+  "addedAt": 1792089508996,
+  "updatedAt": 1792089508996,
+  "lastScan": 1792089508994,
+  "scanVersion": "2.37.1",
+  "isMissing": false,
+  "isInvalid": false,
+  "mediaType": "book",
+  "media": {
+    "id": "8f55c184-1914-4171-8311-57b22072e661",
+    "libraryItemId": "8bdb9b23-23f1-419e-ac24-f7a20723e579",
+    "metadata": {
+      "title": "Quiet Morning",
+      "subtitle": null,
+      "authors": [
+        {
+          "id": "5e587008-a806-4ce6-9a92-989d07257693",
+          "name": "Jane Doe"
+        }
+      ],
+      "narrators": [],
+      "series": [],
+      "genres": [],
+      "publishedYear": null,
+      "publishedDate": null,
+      "publisher": null,
+      "description": null,
+      "isbn": null,
+      "asin": null,
+      "language": null,
+      "explicit": false,
+      "abridged": false
+    },
+    "coverPath": "/audiobooks/Jane Doe/Quiet Morning/cover.jpg",
+    "tags": [],
+    "audioFiles": [
+      {
+        "index": 1,
+        "ino": "30055384",
+        "metadata": {
+          "filename": "01.mp3",
+          "ext": ".mp3",
+          "path": "/audiobooks/Jane Doe/Quiet Morning/01.mp3",
+          "relPath": "01.mp3",
+          "size": 2400403,
+          "mtimeMs": 1792089454510,
+          "ctimeMs": 1792089454510,
+          "birthtimeMs": 1792089451690
+        },
+        "addedAt": 1792089508994,
+        "updatedAt": 1792089508994,
+        "trackNumFromMeta": null,
+        "discNumFromMeta": null,
+        "trackNumFromFilename": 1,
+        "discNumFromFilename": null,
+        "manuallyVerified": false,
+        "exclude": false,
+        "error": null,
+        "format": "MP2/3 (MPEG audio layer 2/3)",
+        "duration": 600,
+        "bitRate": 32000,
+        "language": null,
+        "codec": "mp3",
+        "timeBase": "1/14112000",
+        "channels": 1,
+        "channelLayout": "mono",
+        "chapters": [],
+        "embeddedCoverArt": null,
+        "metaTags": {
+          "tagArtist": "Jane Doe",
+          "tagTitle": "Quiet Morning",
+          "tagEncoder": "Lavf58.76.100"
+        },
+        "mimeType": "audio/mpeg"
+      }
+    ],
+    "chapters": [],
+    "ebookFile": null
+  },
+  "libraryFiles": [
+    {
+      "ino": "30055384",
+      "metadata": {
+        "filename": "01.mp3",
+        "ext": ".mp3",
+        "path": "/audiobooks/Jane Doe/Quiet Morning/01.mp3",
+        "relPath": "01.mp3",
+        "size": 2400403,
+        "mtimeMs": 1792089454510,
+        "ctimeMs": 1792089454510,
+        "birthtimeMs": 1792089451690
+      },
+      "isSupplementary": null,
+      "addedAt": 1792089505656,
+      "updatedAt": 1792089505656,
+      "fileType": "audio"
+    },
+    {
+      "ino": "30055387",
+      "metadata": {
+        "filename": "cover.jpg",
+        "ext": ".jpg",
+        "path": "/audiobooks/Jane Doe/Quiet Morning/cover.jpg",
+        "relPath": "cover.jpg",
+        "size": 1163,
+        "mtimeMs": 1792089470273,
+        "ctimeMs": 1792089470273,
+        "birthtimeMs": 1792089470273
+      },
+      "isSupplementary": null,
+      "addedAt": 1792089505656,
+      "updatedAt": 1792089505656,
+      "fileType": "image"
+    }
+  ]
+}

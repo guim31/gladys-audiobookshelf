@@ -30,6 +30,26 @@ Gladys before reporting a problem.
 
 In scope: the code of this repository and the Docker image it publishes.
 
+What the integration handles:
+
+- **Secrets**: the Audiobookshelf API key (an administrator's) is a `secret`
+  field of the Gladys configuration. The integration reads it from Gladys at
+  startup, keeps it in memory, sends it only to the configured server (in the
+  `Authorization` header, never in a URL), and never writes it to `/data` nor
+  to the logs. The user list of Audiobookshelf carries the tokens of the
+  users: the integration keeps only their id and name.
+- **Stored in `/data`**: `audiobookshelf-state.json`, the server address, the
+  date of the last finished book per user id and of the last downloaded
+  episode per library, so a restart announces nothing twice. Nothing else.
+- **Privacy**: the titles listened to only appear in the logs at the debug
+  level (`LOG_LEVEL=debug`).
+- **Network**: requests go only to the Audiobookshelf address typed in the
+  configuration, on the local network, in HTTP or HTTPS (certificates
+  verified). The covers shown by the widgets are read from this server, never
+  from the Internet. The integration opens no port and calls no cloud service.
+  It only reads, and asks the server to check the podcast feeds: it never
+  deletes nor changes anything.
+
 Out of scope: Gladys Assistant itself (see its
 [security policy](https://github.com/GladysAssistant/Gladys/security/policy)),
-and the third-party services and devices the integration talks to.
+Audiobookshelf itself, and the other devices and services of your network.

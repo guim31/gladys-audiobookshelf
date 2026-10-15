@@ -1,177 +1,829 @@
 {
   "manifest_version": 1,
   "type": "device",
-  "name": "Demo Devices Template",
+  "name": "Audiobookshelf",
   "description": {
-    "en": "Starter template showing sensors, a switch, a dimmable light and a smart plug.",
-    "fr": "Template de démarrage : capteurs, interrupteur, lampe variable et prise connectée."
+    "en": "Follow who listens to what on your Audiobookshelf server and react to it in your scenes.",
+    "fr": "Suivez qui écoute quoi sur votre serveur Audiobookshelf et réagissez-y dans vos scènes.",
+    "de": "Verfolge, wer was auf deinem Audiobookshelf-Server hört, und reagiere in Szenen darauf.",
+    "es": "Siga quién escucha qué en su servidor Audiobookshelf y reaccione en sus escenas."
   },
   "version": "1.0.0",
-  "docker_image": "ghcr.io/gladysassistant/integration-template-js:1.0.0",
+  "docker_image": "ghcr.io/guim31/gladys-audiobookshelf:1.0.0",
   "gladys_version": ">=5.1.0",
-  "cover_image": "https://raw.githubusercontent.com/GladysAssistant/integration-template-js/master/cover.png",
-  "categories": ["lighting", "security", "environment"],
-  "transports": ["local", "cloud"],
+  "cover_image": "https://raw.githubusercontent.com/guim31/gladys-audiobookshelf/main/cover.png",
+  "categories": ["multimedia"],
+  "transports": ["local"],
   "config_schema": [
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Getting started", "fr": "Pour commencer" },
+      "label": {
+        "en": "Connect to your Audiobookshelf server",
+        "fr": "Connexion à votre serveur Audiobookshelf",
+        "de": "Verbindung zu deinem Audiobookshelf-Server",
+        "es": "Conexión a su servidor Audiobookshelf"
+      },
       "description": {
-        "en": "The demo weather station reads real data from the free Open-Meteo API: pick the coordinates to observe. No account, no API key.",
-        "fr": "La station météo de démonstration lit de vraies données via l'API gratuite Open-Meteo : choisissez les coordonnées à observer. Pas de compte, pas de clé d'API."
+        "en": "Enter the address of the server (for example http://192.168.1.20:13378) and an API key of an administrator: in Audiobookshelf, Settings > API Keys > Add API Key, for an admin user. Before version 2.26, use the API token of an admin user (Settings > Users).",
+        "fr": "Indiquez l'adresse du serveur (par exemple http://192.168.1.20:13378) et une clé d'API d'administrateur : dans Audiobookshelf, Paramètres > Clés API > Ajouter, pour un utilisateur admin. Avant la version 2.26, utilisez le jeton d'API d'un admin (Paramètres > Utilisateurs).",
+        "de": "Gib die Adresse des Servers (zum Beispiel http://192.168.1.20:13378) und einen API-Schlüssel eines Administrators ein: in Audiobookshelf unter Einstellungen > API-Schlüssel > Hinzufügen, für einen Admin. Vor Version 2.26 nimm das API-Token eines Admins (Einstellungen > Benutzer).",
+        "es": "Introduzca la dirección del servidor (por ejemplo http://192.168.1.20:13378) y una clave de API de administrador: en Audiobookshelf, Ajustes > Claves API > Añadir, para un usuario admin. Antes de la versión 2.26, use el token de API de un admin (Ajustes > Usuarios)."
       },
       "links": [
         {
-          "url": "https://open-meteo.com/en/docs",
-          "label": { "en": "Open-Meteo documentation", "fr": "Documentation Open-Meteo" }
+          "url": "https://audiobookshelf.org/docs/documentation/server-management/api-keys/",
+          "label": {
+            "en": "Audiobookshelf API keys",
+            "fr": "Clés d'API d'Audiobookshelf",
+            "de": "API-Schlüssel von Audiobookshelf",
+            "es": "Claves de API de Audiobookshelf"
+          }
         }
       ]
     },
     {
-      "key": "latitude",
-      "type": "number",
-      "label": { "en": "Latitude", "fr": "Latitude" },
-      "description": {
-        "en": "Latitude used for the demo weather sensor.",
-        "fr": "Latitude utilisée par le capteur météo de démonstration."
+      "key": "server_url",
+      "type": "string",
+      "label": {
+        "en": "Server URL",
+        "fr": "URL du serveur",
+        "de": "Server-URL",
+        "es": "URL del servidor"
       },
-      "placeholder": { "en": "e.g. 48.8566", "fr": "ex. 48.8566" },
-      "required": true,
-      "default": 48.8566,
-      "min": -90,
-      "max": 90
+      "description": {
+        "en": "Address of the server, port included (13378 for the Docker image, often 80). An https address behind a reverse proxy works too.",
+        "fr": "Adresse du serveur, port inclus (13378 pour l'image Docker, souvent 80). Une adresse https derrière un reverse proxy fonctionne aussi.",
+        "de": "Adresse des Servers mit Port (13378 beim Docker-Image, oft 80). Eine https-Adresse hinter einem Reverse Proxy funktioniert ebenfalls.",
+        "es": "Dirección del servidor, puerto incluido (13378 para la imagen Docker, a menudo 80). También funciona una dirección https detrás de un proxy inverso."
+      },
+      "placeholder": {
+        "en": "http://192.168.1.20:13378",
+        "fr": "http://192.168.1.20:13378",
+        "de": "http://192.168.1.20:13378",
+        "es": "http://192.168.1.20:13378"
+      },
+      "required": true
     },
     {
-      "key": "longitude",
-      "type": "number",
-      "label": { "en": "Longitude", "fr": "Longitude" },
-      "description": {
-        "en": "Longitude used for the demo weather sensor.",
-        "fr": "Longitude utilisée par le capteur météo de démonstration."
+      "key": "api_key",
+      "type": "secret",
+      "label": {
+        "en": "API key (administrator)",
+        "fr": "Clé d'API (administrateur)",
+        "de": "API-Schlüssel (Administrator)",
+        "es": "Clave de API (administrador)"
       },
-      "placeholder": { "en": "e.g. 2.3522", "fr": "ex. 2.3522" },
-      "required": true,
-      "default": 2.3522,
-      "min": -180,
-      "max": 180
+      "required": true
     },
     {
-      "key": "unit",
+      "key": "poll_interval",
       "type": "select",
-      "label": { "en": "Temperature unit", "fr": "Unité de température" },
+      "label": {
+        "en": "Listening refresh",
+        "fr": "Rafraîchissement des écoutes",
+        "de": "Aktualisierung der Wiedergaben",
+        "es": "Actualización de las escuchas"
+      },
+      "description": {
+        "en": "How often the open listening sessions are read. Libraries, users and progress are read every 5 minutes.",
+        "fr": "Fréquence de lecture des sessions d'écoute ouvertes. Bibliothèques, utilisateurs et progression sont lus toutes les 5 minutes.",
+        "de": "Wie oft die offenen Wiedergabesitzungen gelesen werden. Bibliotheken, Benutzer und Fortschritt werden alle 5 Minuten gelesen.",
+        "es": "Frecuencia de lectura de las sesiones de escucha abiertas. Bibliotecas, usuarios y progreso se leen cada 5 minutos."
+      },
       "required": false,
-      "default": "celsius",
+      "default": "30",
       "options": [
-        { "value": "celsius", "label": { "en": "Celsius", "fr": "Celsius" } },
-        { "value": "fahrenheit", "label": { "en": "Fahrenheit", "fr": "Fahrenheit" } }
+        {
+          "value": "15",
+          "label": {
+            "en": "15 seconds",
+            "fr": "15 secondes",
+            "de": "15 Sekunden",
+            "es": "15 segundos"
+          }
+        },
+        {
+          "value": "30",
+          "label": {
+            "en": "30 seconds",
+            "fr": "30 secondes",
+            "de": "30 Sekunden",
+            "es": "30 segundos"
+          }
+        },
+        {
+          "value": "60",
+          "label": {
+            "en": "1 minute",
+            "fr": "1 minute",
+            "de": "1 Minute",
+            "es": "1 minuto"
+          }
+        }
       ]
     },
     {
-      "key": "poll_frequency",
-      "type": "number",
-      "label": { "en": "Refresh interval (s)", "fr": "Intervalle de rafraîchissement (s)" },
+      "key": "language",
+      "type": "select",
+      "display": "radio",
+      "label": {
+        "en": "Language of the names",
+        "fr": "Langue des noms",
+        "de": "Sprache der Namen",
+        "es": "Idioma de los nombres"
+      },
       "description": {
-        "en": "How often sensors are polled, in seconds (one minute minimum).",
-        "fr": "Fréquence d'interrogation des capteurs, en secondes (une minute minimum)."
+        "en": "Language of the feature names and of the texts of the scene actions. Names are set when a device is created: to rename them after a change, delete and re-add the device.",
+        "fr": "Langue des noms de fonctionnalités et des textes des actions de scène. Les noms sont fixés à la création d'un appareil : pour les renommer après un changement, supprimez puis rajoutez l'appareil.",
+        "de": "Sprache der Funktionsnamen und der Texte der Szenenaktionen. Die Namen werden beim Erstellen eines Geräts festgelegt: Um sie nach einer Änderung umzubenennen, lösche das Gerät und füge es erneut hinzu.",
+        "es": "Idioma de los nombres de las funcionalidades y de los textos de las acciones de escena. Los nombres se fijan al crear un dispositivo: para cambiarlos, elimine el dispositivo y vuelva a añadirlo."
       },
       "required": false,
-      "default": 300,
-      "min": 60,
-      "max": 3600
+      "default": "fr",
+      "options": [
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "Anglais",
+            "de": "Englisch",
+            "es": "Inglés"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "French",
+            "fr": "Français",
+            "de": "Französisch",
+            "es": "Francés"
+          }
+        },
+        {
+          "value": "de",
+          "label": {
+            "en": "German",
+            "fr": "Allemand",
+            "de": "Deutsch",
+            "es": "Alemán"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Spanish",
+            "fr": "Espagnol",
+            "de": "Spanisch",
+            "es": "Español"
+          }
+        }
+      ]
     }
   ],
   "actions": [
     {
-      "key": "test_weather",
-      "label": { "en": "Test the weather provider", "fr": "Tester le fournisseur météo" },
+      "key": "test_connection",
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion",
+        "de": "Verbindung testen",
+        "es": "Probar la conexión"
+      },
+      "description": {
+        "en": "Reads the server now and reports what it finds.",
+        "fr": "Lit le serveur maintenant et indique ce qu'il trouve.",
+        "de": "Liest den Server sofort und meldet, was er findet.",
+        "es": "Lee el servidor ahora e indica lo que encuentra."
+      },
       "timeout_seconds": 30
-    },
-    {
-      "key": "identify",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "fields": [
-        {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
-        }
-      ]
     }
   ],
   "scene_triggers": [
     {
-      "key": "motion_detected",
-      "label": { "en": "Motion detected", "fr": "Mouvement détecté" },
+      "key": "listening_started",
+      "label": {
+        "en": "Listening started",
+        "fr": "Écoute démarrée",
+        "de": "Wiedergabe gestartet",
+        "es": "Escucha iniciada"
+      },
       "description": {
-        "en": "A demo motion sensor saw a person or an animal move.",
-        "fr": "Un détecteur de démonstration a vu bouger une personne ou un animal."
+        "en": "A user starts or resumes an audiobook or a podcast episode.",
+        "fr": "Un utilisateur lance ou reprend un livre audio ou un épisode de podcast.",
+        "de": "Ein Benutzer startet oder setzt ein Hörbuch oder eine Podcast-Episode fort.",
+        "es": "Un usuario inicia o reanuda un audiolibro o un episodio de pódcast."
       },
       "fields": [
         {
           "key": "device",
           "type": "select",
           "source": "devices",
-          "label": { "en": "Sensor", "fr": "Détecteur" }
+          "label": {
+            "en": "User (empty: any)",
+            "fr": "Utilisateur (vide : n'importe lequel)",
+            "de": "Benutzer (leer: beliebig)",
+            "es": "Usuario (vacío: cualquiera)"
+          }
         },
         {
-          "key": "target",
-          "type": "multi_select",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" },
+          "key": "media_type",
+          "type": "select",
+          "label": {
+            "en": "Type (empty: both)",
+            "fr": "Type (vide : les deux)",
+            "de": "Typ (leer: beide)",
+            "es": "Tipo (vacío: ambos)"
+          },
           "options": [
-            { "value": "person", "label": { "en": "Person", "fr": "Personne" } },
-            { "value": "animal", "label": { "en": "Animal", "fr": "Animal" } }
+            {
+              "value": "book",
+              "label": {
+                "en": "Audiobook",
+                "fr": "Livre audio",
+                "de": "Hörbuch",
+                "es": "Audiolibro"
+              }
+            },
+            {
+              "value": "podcast",
+              "label": {
+                "en": "Podcast episode",
+                "fr": "Épisode de podcast",
+                "de": "Podcast-Episode",
+                "es": "Episodio de pódcast"
+              }
+            }
           ]
         }
       ],
       "variables": [
         {
-          "key": "target",
+          "key": "user",
           "type": "string",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" }
+          "label": {
+            "en": "Audiobookshelf user",
+            "fr": "Utilisateur Audiobookshelf",
+            "de": "Audiobookshelf-Benutzer",
+            "es": "Usuario de Audiobookshelf"
+          }
+        },
+        {
+          "key": "device",
+          "type": "string",
+          "label": {
+            "en": "User device",
+            "fr": "Appareil de l'utilisateur",
+            "de": "Gerät des Benutzers",
+            "es": "Dispositivo del usuario"
+          }
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "label": {
+            "en": "Title (book or episode)",
+            "fr": "Titre (livre ou épisode)",
+            "de": "Titel (Buch oder Episode)",
+            "es": "Título (libro o episodio)"
+          }
+        },
+        {
+          "key": "author",
+          "type": "string",
+          "label": {
+            "en": "Author",
+            "fr": "Auteur",
+            "de": "Autor",
+            "es": "Autor"
+          }
+        },
+        {
+          "key": "podcast",
+          "type": "string",
+          "label": {
+            "en": "Podcast (for an episode)",
+            "fr": "Podcast (pour un épisode)",
+            "de": "Podcast (bei einer Episode)",
+            "es": "Pódcast (para un episodio)"
+          }
+        },
+        {
+          "key": "media_type",
+          "type": "string",
+          "label": {
+            "en": "Type (book, podcast)",
+            "fr": "Type (book, podcast)",
+            "de": "Typ (book, podcast)",
+            "es": "Tipo (book, podcast)"
+          }
+        },
+        {
+          "key": "progress",
+          "type": "number",
+          "label": {
+            "en": "Progress (%)",
+            "fr": "Progression (%)",
+            "de": "Fortschritt (%)",
+            "es": "Progreso (%)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "listening_stopped",
+      "label": {
+        "en": "Listening stopped",
+        "fr": "Écoute arrêtée",
+        "de": "Wiedergabe beendet",
+        "es": "Escucha detenida"
+      },
+      "description": {
+        "en": "A user pauses or stops listening (after 90 seconds without progress).",
+        "fr": "Un utilisateur met en pause ou arrête son écoute (après 90 secondes sans progression).",
+        "de": "Ein Benutzer pausiert oder beendet die Wiedergabe (nach 90 Sekunden ohne Fortschritt).",
+        "es": "Un usuario pausa o detiene la escucha (tras 90 segundos sin progreso)."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "User (empty: any)",
+            "fr": "Utilisateur (vide : n'importe lequel)",
+            "de": "Benutzer (leer: beliebig)",
+            "es": "Usuario (vacío: cualquiera)"
+          }
+        },
+        {
+          "key": "media_type",
+          "type": "select",
+          "label": {
+            "en": "Type (empty: both)",
+            "fr": "Type (vide : les deux)",
+            "de": "Typ (leer: beide)",
+            "es": "Tipo (vacío: ambos)"
+          },
+          "options": [
+            {
+              "value": "book",
+              "label": {
+                "en": "Audiobook",
+                "fr": "Livre audio",
+                "de": "Hörbuch",
+                "es": "Audiolibro"
+              }
+            },
+            {
+              "value": "podcast",
+              "label": {
+                "en": "Podcast episode",
+                "fr": "Épisode de podcast",
+                "de": "Podcast-Episode",
+                "es": "Episodio de pódcast"
+              }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "user",
+          "type": "string",
+          "label": {
+            "en": "Audiobookshelf user",
+            "fr": "Utilisateur Audiobookshelf",
+            "de": "Audiobookshelf-Benutzer",
+            "es": "Usuario de Audiobookshelf"
+          }
+        },
+        {
+          "key": "device",
+          "type": "string",
+          "label": {
+            "en": "User device",
+            "fr": "Appareil de l'utilisateur",
+            "de": "Gerät des Benutzers",
+            "es": "Dispositivo del usuario"
+          }
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "label": {
+            "en": "Title (book or episode)",
+            "fr": "Titre (livre ou épisode)",
+            "de": "Titel (Buch oder Episode)",
+            "es": "Título (libro o episodio)"
+          }
+        },
+        {
+          "key": "author",
+          "type": "string",
+          "label": {
+            "en": "Author",
+            "fr": "Auteur",
+            "de": "Autor",
+            "es": "Autor"
+          }
+        },
+        {
+          "key": "podcast",
+          "type": "string",
+          "label": {
+            "en": "Podcast (for an episode)",
+            "fr": "Podcast (pour un épisode)",
+            "de": "Podcast (bei einer Episode)",
+            "es": "Pódcast (para un episodio)"
+          }
+        },
+        {
+          "key": "media_type",
+          "type": "string",
+          "label": {
+            "en": "Type (book, podcast)",
+            "fr": "Type (book, podcast)",
+            "de": "Typ (book, podcast)",
+            "es": "Tipo (book, podcast)"
+          }
+        },
+        {
+          "key": "progress",
+          "type": "number",
+          "label": {
+            "en": "Progress (%)",
+            "fr": "Progression (%)",
+            "de": "Fortschritt (%)",
+            "es": "Progreso (%)"
+          }
+        },
+        {
+          "key": "minutes",
+          "type": "number",
+          "label": {
+            "en": "Minutes listened in the session",
+            "fr": "Minutes écoutées dans la session",
+            "de": "In der Sitzung gehörte Minuten",
+            "es": "Minutos escuchados en la sesión"
+          }
+        }
+      ]
+    },
+    {
+      "key": "item_finished",
+      "label": {
+        "en": "Book or episode finished",
+        "fr": "Livre ou épisode terminé",
+        "de": "Buch oder Episode beendet",
+        "es": "Libro o episodio terminado"
+      },
+      "description": {
+        "en": "A user reaches the end of an audiobook or of a podcast episode, or marks it as finished.",
+        "fr": "Un utilisateur arrive au bout d'un livre audio ou d'un épisode, ou le marque comme terminé.",
+        "de": "Ein Benutzer erreicht das Ende eines Hörbuchs oder einer Episode oder markiert es als beendet.",
+        "es": "Un usuario llega al final de un audiolibro o de un episodio, o lo marca como terminado."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "User (empty: any)",
+            "fr": "Utilisateur (vide : n'importe lequel)",
+            "de": "Benutzer (leer: beliebig)",
+            "es": "Usuario (vacío: cualquiera)"
+          }
+        },
+        {
+          "key": "media_type",
+          "type": "select",
+          "label": {
+            "en": "Type (empty: both)",
+            "fr": "Type (vide : les deux)",
+            "de": "Typ (leer: beide)",
+            "es": "Tipo (vacío: ambos)"
+          },
+          "options": [
+            {
+              "value": "book",
+              "label": {
+                "en": "Audiobook",
+                "fr": "Livre audio",
+                "de": "Hörbuch",
+                "es": "Audiolibro"
+              }
+            },
+            {
+              "value": "podcast",
+              "label": {
+                "en": "Podcast episode",
+                "fr": "Épisode de podcast",
+                "de": "Podcast-Episode",
+                "es": "Episodio de pódcast"
+              }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "user",
+          "type": "string",
+          "label": {
+            "en": "Audiobookshelf user",
+            "fr": "Utilisateur Audiobookshelf",
+            "de": "Audiobookshelf-Benutzer",
+            "es": "Usuario de Audiobookshelf"
+          }
+        },
+        {
+          "key": "device",
+          "type": "string",
+          "label": {
+            "en": "User device",
+            "fr": "Appareil de l'utilisateur",
+            "de": "Gerät des Benutzers",
+            "es": "Dispositivo del usuario"
+          }
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "label": {
+            "en": "Title (book or episode)",
+            "fr": "Titre (livre ou épisode)",
+            "de": "Titel (Buch oder Episode)",
+            "es": "Título (libro o episodio)"
+          }
+        },
+        {
+          "key": "author",
+          "type": "string",
+          "label": {
+            "en": "Author",
+            "fr": "Auteur",
+            "de": "Autor",
+            "es": "Autor"
+          }
+        },
+        {
+          "key": "podcast",
+          "type": "string",
+          "label": {
+            "en": "Podcast (for an episode)",
+            "fr": "Podcast (pour un épisode)",
+            "de": "Podcast (bei einer Episode)",
+            "es": "Pódcast (para un episodio)"
+          }
+        },
+        {
+          "key": "media_type",
+          "type": "string",
+          "label": {
+            "en": "Type (book, podcast)",
+            "fr": "Type (book, podcast)",
+            "de": "Typ (book, podcast)",
+            "es": "Tipo (book, podcast)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "episode_downloaded",
+      "label": {
+        "en": "New podcast episode downloaded",
+        "fr": "Nouvel épisode de podcast téléchargé",
+        "de": "Neue Podcast-Episode heruntergeladen",
+        "es": "Nuevo episodio de pódcast descargado"
+      },
+      "description": {
+        "en": "Audiobookshelf downloaded a new episode of a podcast.",
+        "fr": "Audiobookshelf a téléchargé un nouvel épisode d'un podcast.",
+        "de": "Audiobookshelf hat eine neue Episode eines Podcasts heruntergeladen.",
+        "es": "Audiobookshelf ha descargado un nuevo episodio de un pódcast."
+      },
+      "fields": [
+        {
+          "key": "podcast",
+          "type": "string",
+          "label": {
+            "en": "Podcast title (empty: any)",
+            "fr": "Titre du podcast (vide : n'importe lequel)",
+            "de": "Titel des Podcasts (leer: beliebig)",
+            "es": "Título del pódcast (vacío: cualquiera)"
+          },
+          "description": {
+            "en": "Exactly as shown in Audiobookshelf.",
+            "fr": "Exactement comme dans Audiobookshelf.",
+            "de": "Genau wie in Audiobookshelf angezeigt.",
+            "es": "Exactamente como aparece en Audiobookshelf."
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "podcast",
+          "type": "string",
+          "label": {
+            "en": "Podcast title",
+            "fr": "Titre du podcast",
+            "de": "Titel des Podcasts",
+            "es": "Título del pódcast"
+          }
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "label": {
+            "en": "Episode title",
+            "fr": "Titre de l'épisode",
+            "de": "Titel der Episode",
+            "es": "Título del episodio"
+          }
+        },
+        {
+          "key": "library",
+          "type": "string",
+          "label": {
+            "en": "Library",
+            "fr": "Bibliothèque",
+            "de": "Bibliothek",
+            "es": "Biblioteca"
+          }
+        },
+        {
+          "key": "minutes",
+          "type": "number",
+          "label": {
+            "en": "Duration (minutes)",
+            "fr": "Durée (minutes)",
+            "de": "Dauer (Minuten)",
+            "es": "Duración (minutos)"
+          }
+        },
+        {
+          "key": "device",
+          "type": "string",
+          "label": {
+            "en": "Server device",
+            "fr": "Appareil du serveur",
+            "de": "Gerät des Servers",
+            "es": "Dispositivo del servidor"
+          }
         }
       ]
     }
   ],
   "scene_actions": [
     {
-      "key": "identify_device",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "description": {
-        "en": "Make a device signal itself (the demo light blinks).",
-        "fr": "Fait se signaler un appareil (la lampe de démonstration clignote)."
+      "key": "check_new_episodes",
+      "label": {
+        "en": "Check for new podcast episodes",
+        "fr": "Chercher de nouveaux épisodes de podcast",
+        "de": "Nach neuen Podcast-Episoden suchen",
+        "es": "Buscar nuevos episodios de pódcast"
       },
-      "timeout_seconds": 15,
+      "description": {
+        "en": "Audiobookshelf reads the feed of every podcast and downloads the new episodes.",
+        "fr": "Audiobookshelf lit le flux de chaque podcast et télécharge les nouveaux épisodes.",
+        "de": "Audiobookshelf liest den Feed jedes Podcasts und lädt die neuen Episoden herunter.",
+        "es": "Audiobookshelf lee el feed de cada pódcast y descarga los episodios nuevos."
+      },
+      "timeout_seconds": 120,
+      "outputs": [
+        {
+          "key": "podcasts",
+          "type": "number",
+          "label": {
+            "en": "Podcasts checked",
+            "fr": "Podcasts vérifiés",
+            "de": "Geprüfte Podcasts",
+            "es": "Pódcasts comprobados"
+          }
+        },
+        {
+          "key": "episodes",
+          "type": "number",
+          "label": {
+            "en": "New episodes found",
+            "fr": "Nouveaux épisodes trouvés",
+            "de": "Gefundene neue Episoden",
+            "es": "Episodios nuevos encontrados"
+          }
+        }
+      ]
+    },
+    {
+      "key": "read_progress",
+      "label": {
+        "en": "Read where I am in my audiobook",
+        "fr": "Lire où j'en suis de mon livre audio",
+        "de": "Vorlesen, wo ich im Hörbuch bin",
+        "es": "Leer por dónde voy en mi audiolibro"
+      },
+      "description": {
+        "en": "A sentence for a message: title, progress and time left of the book or episode in progress.",
+        "fr": "Une phrase pour un message : titre, progression et temps restant du livre ou de l'épisode en cours.",
+        "de": "Ein Satz für eine Nachricht: Titel, Fortschritt und Restzeit des laufenden Buchs oder der Episode.",
+        "es": "Una frase para un mensaje: título, progreso y tiempo restante del libro o episodio en curso."
+      },
+      "timeout_seconds": 30,
       "fields": [
         {
           "key": "device",
           "type": "select",
           "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
+          "label": {
+            "en": "User (empty: everyone listening)",
+            "fr": "Utilisateur (vide : tous ceux qui écoutent)",
+            "de": "Benutzer (leer: alle, die hören)",
+            "es": "Usuario (vacío: todos los que escuchan)"
+          }
         }
       ],
       "outputs": [
         {
-          "key": "signalled",
-          "type": "boolean",
-          "label": { "en": "Device signalled", "fr": "Appareil signalé" }
+          "key": "sentence",
+          "type": "string",
+          "label": {
+            "en": "Sentence",
+            "fr": "Phrase",
+            "de": "Satz",
+            "es": "Frase"
+          }
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "label": {
+            "en": "Title",
+            "fr": "Titre",
+            "de": "Titel",
+            "es": "Título"
+          }
+        },
+        {
+          "key": "progress",
+          "type": "number",
+          "label": {
+            "en": "Progress (%)",
+            "fr": "Progression (%)",
+            "de": "Fortschritt (%)",
+            "es": "Progreso (%)"
+          }
         }
       ]
     }
   ],
   "widgets": [
     {
-      "key": "demo_status",
-      "label": { "en": "Demo status", "fr": "État de la démo" },
-      "description": {
-        "en": "Live temperature and plug power, plug connection and observed location.",
-        "fr": "Température et puissance en direct, connexion de la prise, position observée."
+      "key": "now_listening",
+      "label": {
+        "en": "Now listening",
+        "fr": "En cours d'écoute",
+        "de": "Wird gerade gehört",
+        "es": "Escuchando ahora"
       },
-      "icon": "activity",
-      "action_timeout_seconds": 15
+      "description": {
+        "en": "Who listens to what on Audiobookshelf, with the covers and the progress.",
+        "fr": "Qui écoute quoi sur Audiobookshelf, avec les couvertures et la progression.",
+        "de": "Wer was auf Audiobookshelf hört, mit Covern und Fortschritt.",
+        "es": "Quién escucha qué en Audiobookshelf, con las portadas y el progreso."
+      },
+      "icon": "headphones",
+      "settings": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "User (empty: everyone)",
+            "fr": "Utilisateur (vide : tout le monde)",
+            "de": "Benutzer (leer: alle)",
+            "es": "Usuario (vacío: todos)"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "key": "recently_added",
+      "label": {
+        "en": "Recently added",
+        "fr": "Derniers ajouts",
+        "de": "Zuletzt hinzugefügt",
+        "es": "Añadidos recientemente"
+      },
+      "description": {
+        "en": "The last audiobooks and podcast episodes added, with their covers.",
+        "fr": "Les derniers livres audio et épisodes de podcast ajoutés, avec leurs couvertures.",
+        "de": "Die zuletzt hinzugefügten Hörbücher und Podcast-Episoden mit ihren Covern.",
+        "es": "Los últimos audiolibros y episodios de pódcast añadidos, con sus portadas."
+      },
+      "icon": "book-open",
+      "action_timeout_seconds": 120
     }
   ]
 }

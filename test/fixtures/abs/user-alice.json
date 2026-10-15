@@ -1,0 +1,49 @@
+{
+  "id": "4f941f99-2136-4542-aacf-7f59e425429b",
+  "username": "alice",
+  "email": null,
+  "type": "user",
+  "mediaProgress": [
+    {
+      "id": "cd4c196a-fb56-491b-8b38-4c0a157ab7f7",
+      "userId": "4f941f99-2136-4542-aacf-7f59e425429b",
+      "libraryItemId": "8bdb9b23-23f1-419e-ac24-f7a20723e579",
+      "episodeId": null,
+      "mediaItemId": "8f55c184-1914-4171-8311-57b22072e661",
+      "mediaItemType": "book",
+      "duration": 600,
+      "progress": 0.3333333333333333,
+      "currentTime": 200,
+      "isFinished": false,
+      "hideFromContinueListening": false,
+      "ebookLocation": null,
+      "ebookProgress": 0,
+      "lastUpdate": 1792089575421,
+      "startedAt": 1792089561737,
+      "finishedAt": null,
+      "displayTitle": "Quiet Morning",
+      "coverPath": "/audiobooks/Jane Doe/Quiet Morning/cover.jpg",
+      "mediaUpdatedAt": "2026-10-15T18:38:28.996Z"
+    }
+  ],
+  "seriesHideFromContinueListening": [],
+  "bookmarks": [],
+  "isActive": true,
+  "isLocked": false,
+  "lastSeen": null,
+  "createdAt": 1792089506357,
+  "permissions": {
+    "download": true,
+    "update": false,
+    "delete": false,
+    "upload": false,
+    "createEreader": false,
+    "accessAllLibraries": true,
+    "accessAllTags": true,
+    "accessExplicitContent": true,
+    "selectedTagsNotAccessible": false
+  },
+  "librariesAccessible": [],
+  "itemTagsSelected": [],
+  "hasOpenIDLink": false
+}

@@ -1,0 +1,45 @@
+{
+  "largestItems": [
+    {
+      "id": "5386bc98-c3d7-4da7-980a-36013b0a3cc4",
+      "title": "Long Evening",
+      "size": 3600467
+    },
+    {
+      "id": "8bdb9b23-23f1-419e-ac24-f7a20723e579",
+      "title": "Quiet Morning",
+      "size": 2401566
+    }
+  ],
+  "totalAuthors": 2,
+  "authorsWithCount": [
+    {
+      "id": "474987bf-7088-4652-8d2e-3a4eaba25e93",
+      "name": "John Roe",
+      "count": 1
+    },
+    {
+      "id": "5e587008-a806-4ce6-9a92-989d07257693",
+      "name": "Jane Doe",
+      "count": 1
+    }
+  ],
+  "totalGenres": 0,
+  "genresWithCount": [],
+  "totalItems": 2,
+  "longestItems": [
+    {
+      "id": "5386bc98-c3d7-4da7-980a-36013b0a3cc4",
+      "title": "Long Evening",
+      "duration": 900
+    },
+    {
+      "id": "8bdb9b23-23f1-419e-ac24-f7a20723e579",
+      "title": "Quiet Morning",
+      "duration": 600
+    }
+  ],
+  "totalSize": 6002033,
+  "totalDuration": 1500,
+  "numAudioTracks": 2
+}
