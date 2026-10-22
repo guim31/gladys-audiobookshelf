@@ -1,6 +1,6 @@
 {
   "name": "gladys-audiobookshelf",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Audiobookshelf integration for Gladys Assistant: who listens to what, progress, finished books, new podcast episodes.",
   "type": "module",
